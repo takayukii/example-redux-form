@@ -1,5 +1,5 @@
 import keymirror from 'keymirror';
 
-export const TestForms = keymirror({
+export const TestFormTypes = keymirror({
   APP: null,
 });

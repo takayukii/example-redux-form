@@ -5,8 +5,21 @@ import {Provider} from 'react-redux';
 import configureStore from './utils/configureStore';
 
 import App from './components/App';
+import {TestFormTypes} from './constants/FormTypes'
+const {APP: FORM} = TestFormTypes;
 
-const initialState = {};
+const initialState = {
+  form: {
+    [FORM]: {
+      initial: {
+        __isOpen: true,
+      },
+      values: {
+        __isOpen: true,
+      }
+    }
+  }
+};
 const store = configureStore({initialState});
 
 ReactDOM.render(

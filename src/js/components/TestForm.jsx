@@ -2,33 +2,55 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {Field, reduxForm, getFormValues} from 'redux-form';
 
-import TestActions from '../actions/TestActions';
-import {TestForms} from '../constants/FormTypes';
+import {TestFormTypes} from '../constants/FormTypes';
+const {APP: FORM} = TestFormTypes;
 import './App.scss';
+
+const initialValues = {
+  __isOpen: false,
+};
 
 export class TestForm extends Component {
   constructor(props) {
     super(props);
+    this.onClickButton = this.onClickButton.bind(this);
   }
 
   render() {
-    const {pristine, invalid, submitting, handleSubmit} = this.props;
+    const {pristine, invalid, submitting, handleSubmit, formValues} = this.props;
     return (
-      <form className="form" onSubmit={handleSubmit}>
-          <Field
-            component={compnentA}
-            name="a"
-            type="text"
-          />
-          <button className="btn btn-primary" disabled={pristine || invalid || submitting}>
-            Submit
-          </button>
-      </form>
+      <div>
+        <button onClick={this.onClickButton}>{formValues.__isOpen ? 'close' : 'open'}</button>
+        <div className={`${formValues.__isOpen ? '' : 'hidden'}`}>
+          <form className="form" onSubmit={handleSubmit}>
+            <Field
+              component={compnentA}
+              name="a"
+              type="text"
+            />
+            <button className="btn btn-primary" disabled={pristine || invalid || submitting}>
+              Submit
+            </button>
+          </form>
+
+        </div>
+      </div>
     );
+  }
+
+  onClickButton(e) {
+    const {change, formValues} = this.props;
+    change('__isOpen', !formValues.__isOpen);
+
+    // it can keep object too.
+    change('__values', {
+      ...formValues
+    });
   }
 }
 
 TestForm.propTypes = {
+  formValues: PropTypes.object,
   change: PropTypes.any,
   handleSubmit: PropTypes.any,
   pristine: PropTypes.bool,
@@ -37,12 +59,14 @@ TestForm.propTypes = {
 };
 
 export const TestFormReduxForm = reduxForm({
-  form: TestForms.APP,
+  form: FORM,
   validate: validateForm,
 })(TestForm);
 
 export default connect((state) => ({
   test: state.test,
+  initialValues,
+  formValues: getFormValues(FORM)(state) || initialValues,
 }))(TestFormReduxForm);
 
 function compnentA(field) {
